@@ -11,11 +11,6 @@ variables:
   AZURE: 'true'
   PYTHON_VERSION: 3.9
   CONDA_ENV: test-env
-resources:
-  containers:
-  - container: ubuntu-latest
-    image: 'ubuntu:latest'
-    options: "--name ci-container -v /usr/bin/docker:/tmp/docker:ro"
 jobs:
 ###########################################
 - job: Linux_latest
@@ -25,7 +20,8 @@ jobs:
     DEBIAN_FRONTEND: 'noninteractive'
     OS_NAME: 'linux'
     SETUP_CONDA: 'true'
-  container: ubuntu-latest
+  pool:
+    vmImage: 'ubuntu-1604'
   strategy:
     matrix:
       regular:
@@ -38,17 +34,17 @@ jobs:
       CONDA=$HOME/miniconda
       echo "##vso[task.setvariable variable=CONDA]$CONDA"
       echo "##vso[task.prependpath]$CONDA/bin"
-      AMDAPPSDK_PATH=$BUILD_SOURCESDIRECTORY/AMDAPPSDK
-      echo "##vso[task.setvariable variable=AMDAPPSDK_PATH]$AMDAPPSDK_PATH"
-      LD_LIBRARY_PATH=$AMDAPPSDK_PATH/lib/x86_64:$LD_LIBRARY_PATH
-      echo "##vso[task.setvariable variable=LD_LIBRARY_PATH]$LD_LIBRARY_PATH"
-      echo "##vso[task.setvariable variable=OPENCL_VENDOR_PATH]$AMDAPPSDK_PATH/etc/OpenCL/vendors"
     displayName: 'Set variables'
   # https://github.com/microsoft/azure-pipelines-agent/issues/2043#issuecomment-687983301
   - script: |
-      /tmp/docker exec -t -u 0 ci-container \
-      sh -c "apt-get update && apt-get -o Dpkg::Options::="--force-confold" -y install sudo"
-    displayName: 'Install sudo'
+      sudo apt-get update
+      sudo apt-get install --no-install-recommends -y \
+        qemu \
+        qemu-user-static \
+        qemu-user \
+        binfmt-support
+      cp /usr/bin/qemu-aarch64-static $(Build.SourcesDirectory)
+    displayName: 'Install QEMU'
   - bash: $(Build.SourcesDirectory)/.ci/setup.sh
     displayName: Setup
   - bash: $(Build.SourcesDirectory)/.ci/test.sh
