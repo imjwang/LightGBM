@@ -50,10 +50,13 @@ jobs:
       ls /proc/sys/fs/binfmt_misc/
     displayName: Configure binfmt_misc
   - script: |
+      export DOCKER_CLI_EXPERIMENTAL=enabled
+      docker --version
+      docker buildx
       docker run \
         -v "$(Build.SourcesDirectory)":"/LightGBM" \
         --rm \
         "quay.io/pypa/manylinux2014_aarch64" \
-        bash \
-        echo "Hello from ARM container!"
+        /bin/bash \
+        uname -r
     displayName: Run docker build
