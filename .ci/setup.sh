@@ -97,7 +97,11 @@ else  # Linux
             cmake
     fi
     if [[ $SETUP_CONDA != "false" ]]; then
-        curl -sL -o conda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+        if [[ $ARCH != "aarch64" ]]; then
+            curl -sL -o conda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+        else
+            curl -sL -o conda.sh https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-aarch64.sh
+        fi
     fi
 fi
 
