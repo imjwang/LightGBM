@@ -19,12 +19,15 @@ jobs:
     COMPILER: gcc
     OS_NAME: 'linux'
   pool:
-    vmImage: 'ubuntu-20.04'
+    vmImage: ubuntu-latest
   strategy:
     matrix:
-      regular:
+      regular_aarch64:
         TASK: regular
-        PYTHON_VERSION: 3.6
+        ARCH: aarch64
+      regular_ppc64le:
+        TASK: regular
+        ARCH: ppc64le
   steps:
   - script: |
       echo "##vso[task.setvariable variable=BUILD_DIRECTORY]$BUILD_SOURCESDIRECTORY"
@@ -33,20 +36,18 @@ jobs:
       echo "##vso[task.setvariable variable=CONDA]$CONDA"
       echo "##vso[task.prependpath]$CONDA/bin"
     displayName: 'Set variables'
-  # https://github.com/microsoft/azure-pipelines-agent/issues/2043#issuecomment-687983301
   - script: |
       sudo apt-get update
       sudo apt-get install --no-install-recommends -y \
+        binfmt-support \
         qemu \
-        qemu-user-static \
         qemu-user \
-        binfmt-support
+        qemu-user-static
     displayName: 'Install QEMU'
   - script: |
       docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-    displayName: Configure binfmt_misc
+    displayName: 'Enable Docker multi-architecture support'
   - script: |
-      export ARCH=aarch64
       export ROOT_DOCKER_FOLDER=/LightGBM
       cat > docker.env <<EOF
       AZURE=$AZURE
@@ -67,4 +68,4 @@ jobs:
       $ROOT_DOCKER_FOLDER/.ci/test.sh || exit -1
       EOF
       docker run --env-file docker.env -v "$(Build.SourcesDirectory)":"$ROOT_DOCKER_FOLDER" --rm "quay.io/pypa/manylinux2014_${ARCH}" /bin/bash $ROOT_DOCKER_FOLDER/docker-script.sh
-    displayName: Run docker build
+    displayName: 'Setup and run tests'
