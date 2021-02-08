@@ -48,5 +48,5 @@ jobs:
       docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
     displayName: Configure binfmt_misc
   - script: |
-      docker run -v "$(Build.SourcesDirectory)":"/LightGBM" --rm quay.io/pypa/manylinux2014_aarch64 /bin/bash /LightGBM/.ci/setup.sh
+      docker run -e ARCH=aarch64 -v "$(Build.SourcesDirectory)":"/LightGBM" --rm quay.io/pypa/manylinux2014_aarch64 /bin/bash /LightGBM/.ci/setup.sh
     displayName: Run docker build
