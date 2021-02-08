@@ -55,5 +55,5 @@ jobs:
         --rm \
         "quay.io/pypa/manylinux2014_aarch64" \
         bash \
-        /LightGBM/.ci/setup.sh
+        echo "Hello from ARM container!"
     displayName: Run docker build
