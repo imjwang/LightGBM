@@ -20,6 +20,7 @@ jobs:
     OS_NAME: 'linux'
   pool:
     vmImage: ubuntu-latest
+  timeoutInMinutes: 360
   strategy:
     matrix:
       regular_aarch64:
