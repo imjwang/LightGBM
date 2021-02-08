@@ -1,7 +1,7 @@
 trigger:
   branches:
     include:
-    - master
+    - qemu
   tags:
     include:
     - v*
@@ -13,7 +13,7 @@ variables:
   CONDA_ENV: test-env
 jobs:
 ###########################################
-- job: Linux_latest
+- job: QEMU
 ###########################################
   variables:
     COMPILER: gcc
@@ -21,7 +21,7 @@ jobs:
     OS_NAME: 'linux'
     SETUP_CONDA: 'true'
   pool:
-    vmImage: 'ubuntu-1604'
+    vmImage: ubuntu-16.04
   strategy:
     matrix:
       regular:
@@ -45,7 +45,15 @@ jobs:
         binfmt-support
       cp /usr/bin/qemu-aarch64-static $(Build.SourcesDirectory)
     displayName: 'Install QEMU'
-  - bash: $(Build.SourcesDirectory)/.ci/setup.sh
-    displayName: Setup
-  - bash: $(Build.SourcesDirectory)/.ci/test.sh
-    displayName: Test
+  - script: |
+      docker run --rm --privileged multiarch/qemu-user-static:register --reset --credential yes
+      ls /proc/sys/fs/binfmt_misc/
+    displayName: Configure binfmt_misc
+  - script: |
+      docker run \
+        -v "$(Build.SourcesDirectory)":"/LightGBM" \
+        --rm \
+        "quay.io/pypa/manylinux2014_aarch64" \
+        bash \
+        /LightGBM/.ci/setup.sh
+    displayName: Run docker build
