@@ -46,11 +46,7 @@ jobs:
     displayName: 'Install QEMU'
   - script: |
       docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-      ls /proc/sys/fs/binfmt_misc/
     displayName: Configure binfmt_misc
   - script: |
-      export DOCKER_CLI_EXPERIMENTAL=enabled
-      docker --version
-      docker buildx
       docker run --rm quay.io/pypa/manylinux2014_aarch64 uname -a
     displayName: Run docker build
