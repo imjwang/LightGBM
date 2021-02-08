@@ -17,9 +17,7 @@ jobs:
 ###########################################
   variables:
     COMPILER: gcc
-    DEBIAN_FRONTEND: 'noninteractive'
     OS_NAME: 'linux'
-    SETUP_CONDA: 'true'
   pool:
     vmImage: 'ubuntu-20.04'
   strategy:
@@ -48,5 +46,25 @@ jobs:
       docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
     displayName: Configure binfmt_misc
   - script: |
-      docker run -e ARCH=aarch64 -v "$(Build.SourcesDirectory)":"/LightGBM" --rm quay.io/pypa/manylinux2014_aarch64 /bin/bash /LightGBM/.ci/setup.sh
+      export ARCH=aarch64
+      export ROOT_DOCKER_FOLDER=/LightGBM
+      cat > docker.env <<EOF
+      AZURE=$AZURE
+      OS_NAME=$OS_NAME
+      ARCH=$ARCH
+      COMPILER=$COMPILER
+      TASK=$TASK
+      METHOD=$METHOD
+      CONDA_ENV=$CONDA_ENV
+      PYTHON_VERSION=$PYTHON_VERSION
+      BUILD_DIRECTORY=$ROOT_DOCKER_FOLDER
+      LGB_VER=$(head -n 1 VERSION.txt)
+      EOF
+      cat > docker-script.sh <<EOF
+      export CONDA=\$HOME/miniconda
+      export PATH=\$CONDA/bin:\$PATH
+      $ROOT_DOCKER_FOLDER/.ci/setup.sh || exit -1
+      $ROOT_DOCKER_FOLDER/.ci/test.sh || exit -1
+      EOF
+      docker run --env-file docker.env -v "$(Build.SourcesDirectory)":"$ROOT_DOCKER_FOLDER" --rm "quay.io/pypa/manylinux2014_${ARCH}" /bin/bash $ROOT_DOCKER_FOLDER/docker-script.sh
     displayName: Run docker build
