@@ -1043,8 +1043,12 @@ def test_contribs_sparse():
     assert isspmatrix_csr(contribs_csr)
     # convert data to dense and get back same contribs
     contribs_dense = gbm.predict(X_test.toarray(), pred_contrib=True)
+    contribs_dense = gbm.predict(X_test.toarray(), pred_contrib=True)
     # validate the values are the same
-    np.testing.assert_allclose(contribs_csr.toarray(), contribs_dense)
+    if os.getenv('ARCH', '') == 'aarch64':
+        np.testing.assert_allclose(contribs_csr.toarray(), contribs_dense, rtol=1e-5)
+    else:
+        np.testing.assert_allclose(contribs_csr.toarray(), contribs_dense)
     assert (np.linalg.norm(gbm.predict(X_test, raw_score=True)
                            - np.sum(contribs_dense, axis=1)) < 1e-4)
     # validate using CSC matrix
@@ -1052,7 +1056,10 @@ def test_contribs_sparse():
     contribs_csc = gbm.predict(X_test_csc, pred_contrib=True)
     assert isspmatrix_csc(contribs_csc)
     # validate the values are the same
-    np.testing.assert_allclose(contribs_csc.toarray(), contribs_dense)
+    if os.getenv('ARCH', '') == 'aarch64':
+        np.testing.assert_allclose(contribs_csc.toarray(), contribs_dense, rtol=1e-5)
+    else:
+        np.testing.assert_allclose(contribs_csc.toarray(), contribs_dense)
 
 
 def test_contribs_sparse_multiclass():
