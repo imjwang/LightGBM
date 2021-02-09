@@ -20,15 +20,12 @@ jobs:
     OS_NAME: 'linux'
   pool:
     vmImage: ubuntu-latest
-  timeoutInMinutes: 360
+  timeoutInMinutes: 120
   strategy:
     matrix:
-      regular_aarch64:
+      regular:
         TASK: regular
         ARCH: aarch64
-      regular_ppc64le:
-        TASK: regular
-        ARCH: ppc64le
   steps:
   - script: |
       echo "##vso[task.setvariable variable=BUILD_DIRECTORY]$BUILD_SOURCESDIRECTORY"
