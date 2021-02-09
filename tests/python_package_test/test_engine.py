@@ -1084,7 +1084,10 @@ def test_contribs_sparse_multiclass():
     contribs_csr_array = np.swapaxes(np.array([sparse_array.todense() for sparse_array in contribs_csr]), 0, 1)
     contribs_csr_arr_re = contribs_csr_array.reshape((contribs_csr_array.shape[0],
                                                       contribs_csr_array.shape[1] * contribs_csr_array.shape[2]))
-    np.testing.assert_allclose(contribs_csr_arr_re, contribs_dense)
+    if os.getenv('ARCH', '') == 'aarch64':
+        np.testing.assert_allclose(contribs_csr_arr_re, contribs_dense, rtol=1e-5)
+    else:
+        np.testing.assert_allclose(contribs_csr_arr_re, contribs_dense)
     contribs_dense_re = contribs_dense.reshape(contribs_csr_array.shape)
     assert np.linalg.norm(gbm.predict(X_test, raw_score=True) - np.sum(contribs_dense_re, axis=2)) < 1e-4
     # validate using CSC matrix
@@ -1097,7 +1100,10 @@ def test_contribs_sparse_multiclass():
     contribs_csc_array = np.swapaxes(np.array([sparse_array.todense() for sparse_array in contribs_csc]), 0, 1)
     contribs_csc_array = contribs_csc_array.reshape((contribs_csc_array.shape[0],
                                                      contribs_csc_array.shape[1] * contribs_csc_array.shape[2]))
-    np.testing.assert_allclose(contribs_csc_array, contribs_dense)
+    if os.getenv('ARCH', '') == 'aarch64':
+        np.testing.assert_allclose(contribs_csc_array, contribs_dense, rtol=1e-5)
+    else:
+        np.testing.assert_allclose(contribs_csc_array, contribs_dense)
 
 
 @pytest.mark.skipif(psutil.virtual_memory().available / 1024 / 1024 / 1024 < 3, reason='not enough RAM')
