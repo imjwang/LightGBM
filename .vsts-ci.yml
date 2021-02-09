@@ -18,6 +18,7 @@ jobs:
   variables:
     COMPILER: gcc
     OS_NAME: 'linux'
+    PRODUCES_ARTIFACTS: 'true'
   pool:
     vmImage: ubuntu-latest
   timeoutInMinutes: 120
