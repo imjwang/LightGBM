@@ -1043,7 +1043,6 @@ def test_contribs_sparse():
     assert isspmatrix_csr(contribs_csr)
     # convert data to dense and get back same contribs
     contribs_dense = gbm.predict(X_test.toarray(), pred_contrib=True)
-    contribs_dense = gbm.predict(X_test.toarray(), pred_contrib=True)
     # validate the values are the same
     if os.getenv('ARCH', '') == 'aarch64':
         np.testing.assert_allclose(contribs_csr.toarray(), contribs_dense, rtol=1e-5)
