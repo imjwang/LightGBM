@@ -97,7 +97,7 @@ else  # Linux
             cmake
     fi
     if [[ $SETUP_CONDA != "false" ]]; then
-        ARCH="${ARCH:-x86_64}"
+        ARCH=$(uname -m)
         if [[ $ARCH == "x86_64" ]]; then
             curl -sL -o conda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
         else
