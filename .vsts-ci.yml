@@ -1,7 +1,7 @@
 trigger:
   branches:
     include:
-    - qemu
+    - qemu1
   tags:
     include:
     - v*
