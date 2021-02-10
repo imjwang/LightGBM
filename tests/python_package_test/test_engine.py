@@ -1045,7 +1045,7 @@ def test_contribs_sparse():
     contribs_dense = gbm.predict(X_test.toarray(), pred_contrib=True)
     # validate the values are the same
     if os.getenv('ARCH', '') == 'aarch64':
-        np.testing.assert_allclose(contribs_csr.toarray(), contribs_dense, rtol=1e-5)
+        np.testing.assert_allclose(contribs_csr.toarray(), contribs_dense, rtol=1, atol=1e-12)
     else:
         np.testing.assert_allclose(contribs_csr.toarray(), contribs_dense)
     assert (np.linalg.norm(gbm.predict(X_test, raw_score=True)
@@ -1056,7 +1056,7 @@ def test_contribs_sparse():
     assert isspmatrix_csc(contribs_csc)
     # validate the values are the same
     if os.getenv('ARCH', '') == 'aarch64':
-        np.testing.assert_allclose(contribs_csc.toarray(), contribs_dense, rtol=1e-5)
+        np.testing.assert_allclose(contribs_csc.toarray(), contribs_dense, rtol=1, atol=1e-12)
     else:
         np.testing.assert_allclose(contribs_csc.toarray(), contribs_dense)
 
@@ -1091,7 +1091,7 @@ def test_contribs_sparse_multiclass():
     contribs_csr_arr_re = contribs_csr_array.reshape((contribs_csr_array.shape[0],
                                                       contribs_csr_array.shape[1] * contribs_csr_array.shape[2]))
     if os.getenv('ARCH', '') == 'aarch64':
-        np.testing.assert_allclose(contribs_csr_arr_re, contribs_dense, rtol=1e-5)
+        np.testing.assert_allclose(contribs_csr_arr_re, contribs_dense, rtol=1, atol=1e-12)
     else:
         np.testing.assert_allclose(contribs_csr_arr_re, contribs_dense)
     contribs_dense_re = contribs_dense.reshape(contribs_csr_array.shape)
@@ -1107,7 +1107,7 @@ def test_contribs_sparse_multiclass():
     contribs_csc_array = contribs_csc_array.reshape((contribs_csc_array.shape[0],
                                                      contribs_csc_array.shape[1] * contribs_csc_array.shape[2]))
     if os.getenv('ARCH', '') == 'aarch64':
-        np.testing.assert_allclose(contribs_csc_array, contribs_dense, rtol=1e-5)
+        np.testing.assert_allclose(contribs_csc_array, contribs_dense, rtol=1, atol=1e-12)
     else:
         np.testing.assert_allclose(contribs_csc_array, contribs_dense)
 
