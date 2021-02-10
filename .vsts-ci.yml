@@ -24,7 +24,34 @@ jobs:
   timeoutInMinutes: 120
   strategy:
     matrix:
-      bdist:
+      bdist1:
+        TASK: bdist
+        ARCH: aarch64
+      bdist2:
+        TASK: bdist
+        ARCH: aarch64
+      bdist3:
+        TASK: bdist
+        ARCH: aarch64
+      bdist4:
+        TASK: bdist
+        ARCH: aarch64
+      bdist5:
+        TASK: bdist
+        ARCH: aarch64
+      bdist6:
+        TASK: bdist
+        ARCH: aarch64
+      bdist7:
+        TASK: bdist
+        ARCH: aarch64
+      bdist8:
+        TASK: bdist
+        ARCH: aarch64
+      bdist9:
+        TASK: bdist
+        ARCH: aarch64
+      bdist10:
         TASK: bdist
         ARCH: aarch64
   steps:
