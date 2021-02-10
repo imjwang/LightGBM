@@ -24,7 +24,7 @@ jobs:
   timeoutInMinutes: 120
   strategy:
     matrix:
-      regular:
+      bdist:
         TASK: bdist
         ARCH: aarch64
   steps:
@@ -59,6 +59,7 @@ jobs:
       PYTHON_VERSION=$PYTHON_VERSION
       BUILD_DIRECTORY=$ROOT_DOCKER_FOLDER
       LGB_VER=$(head -n 1 VERSION.txt)
+      PRODUCES_ARTIFACTS=$PRODUCES_ARTIFACTS
       EOF
       cat > docker-script.sh <<EOF
       export CONDA=\$HOME/miniconda
